@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<comment>회원 관련 쿼리문들</comment>
+	
+	<entry key="loginMember">
+		SELECT * 
+		  FROM MEMBER
+		WHERE MEMBER_ID = ?
+		  AND MEMBER_PWD = ?
+		  AND STATUS = 'N'
+	</entry>
+
+	<entry key="idCheck">
+		SELECT COUNT(*)
+		  FROM MEMBER
+		 WHERE MEMBER_ID = ?
+	</entry>
+	
+	<entry key="emailCheck">
+		SELECT COUNT(*)
+		  FROM MEMBER
+		 WHERE EMAIL = ? 
+	</entry>
+	
+	<entry key="insertMember">
+		INSERT INTO MEMBER (MEMBER_NO, MEMBER_NAME, MEMBER_ID, MEMBER_PWD, GENDER, EMAIL, PHONE, BIRTH)
+     	     VALUES (SEQ_MNO.NEXTVAL, ?, ?, ?, ?, ?, ?, ?)
+	</entry>
+	
+	<entry key="findId">
+		SELECT *
+		  FROM MEMBER
+		 WHERE MEMBER_NAME = ?
+		   AND EMAIL = ?
+		   AND PHONE = ?
+	</entry>
+	
+	<entry key="findPwd">
+		SELECT *
+		  FROM MEMBER
+		 WHERE MEMBER_ID = ?
+		   AND MEMBER_NAME = ?
+		   AND EMAIL = ?
+	</entry>
+	
+	
+	<!--  마이페이지  -->
+	<entry key="selectListBooking">
+		SELECT * 
+		FROM (
+               SELECT ROWNUM RNUM, A.* 
+		        FROM  (				
+						SELECT BOOK_NO, MEMBER_NAME, BOOK_DATE, HOTEL_NAME, TOTAL_PAY, PAY_STATUS
+						  FROM BOOKING B
+						  JOIN MEMBER M ON (MEM_NO = MEMBER_NO)
+						  JOIN ROOM R USING (ROOM_NO)
+						  JOIN HOTEL H ON (HOT_NO = HOTEL_NO)
+						 WHERE B.STATUS = 'N'
+						   AND MEM_NO = ?
+						   AND PAY_STATUS = 'Y'
+						 ORDER BY BOOK_NO DESC)  A)
+              WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectListBookNo">
+		SELECT BOOK_NO, MEMBER_NAME, BOOK_DATE, HOTEL_NAME, ROOM_PRICE, PAY_STATUS
+		  FROM BOOKING B
+		  JOIN MEMBER M ON (MEM_NO = MEMBER_NO)
+		  JOIN ROOM R USING (ROOM_NO)
+		  JOIN HOTEL H ON (HOT_NO = HOTEL_NO)
+		 WHERE B.STATUS = 'N'
+		   AND MEM_NO = ?
+           AND BOOK_NO = ?
+           AND PAY_STATUS = 'Y'
+	</entry>
+	
+	<entry key="loadMemberInfo">
+		SELECT *
+		  FROM MEMBER
+		 WHERE MEMBER_NO = ?
+	</entry>
+	
+	<entry key="reservationCancel">				
+		UPDATE BOOKING 
+		   SET STATUS = 'Y' 
+		 WHERE BOOK_NO = ? 
+		   AND MEM_NO = ?
+	</entry>
+	
+	
+	<!--  영훈님꺼 -->
+	<entry key="updatePwdMember">
+		UPDATE MEMBER
+		   SET MEMBER_PWD = ?
+		     , MODIFY_DATE = SYSDATE
+		 WHERE MEMBER_ID = ?
+		   AND MEMBER_PWD = ? 
+		   AND STATUS = 'N'
+	</entry>
+	
+	<entry key="selectMember">
+		SELECT * 
+		FROM MEMBER 
+		WHERE MEMBER_ID = ? 
+		  AND STATUS = 'N'
+	</entry>
+	
+	<entry key="updateMember">
+		UPDATE MEMBER 
+		   SET MEMBER_NAME = ? 
+		     , PHONE = ? 
+		     , BIRTH = ? 
+		     , GENDER = ? 
+		     , MODIFY_DATE = SYSDATE 
+		 WHERE MEMBER_NO = ? 
+		   AND STATUS = 'N'
+	</entry>
+	
+	<entry key="selectMember2">
+		SELECT *
+		FROM MEMBER
+		WHERE MEMBER_NAME = ?
+		  AND STATUS = 'N'
+	</entry>
+	<!--  영훈님꺼 -->
+	
+	<!--  마이페이지 -->
+	<entry key="selectBookCount">
+		SELECT COUNT(*) COUNT
+		  FROM BOOKING
+		 WHERE MEM_NO = ?
+		   AND PAY_STATUS = 'Y'
+	</entry>
+	
+	<!-- 카드조회 -->
+	<entry key="selectCard">
+		SELECT *
+		FROM CARD
+		WHERE MEMBER_NO = ?
+		  AND STATUS = 'N'
+	</entry>
+	
+	<!--  카드 업데이트 -->
+	<entry key="updateCard">
+		UPDATE CARD 
+		   SET CARD_NO = ? 
+		     , CARD_VALIDATE = ? 
+		     , CARD_PASSWORD = ?
+		     , CVC = ?
+		WHERE MEMBER_NO = ?
+	</entry>
+	
+	<!-- card insert -->
+	<entry key="insertCard">
+		INSERT INTO CARD(CARD_NO, CARD_VALIDATE, CARD_PASSWORD, CVC, MEMBER_NO, STATUS)  
+		VALUES(?, ?, ?, ?, ?, 'Y')
+	</entry>
+	
+	<!-- card 삭제 -->
+	<entry key="deleteCard">
+		UPDATE CARD
+		   SET STATUS = 'Y'
+		 WHERE MEMBER_NO = ?
+	</entry>
+</properties>
